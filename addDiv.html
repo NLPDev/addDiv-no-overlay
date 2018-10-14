@@ -1,0 +1,175 @@
+
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.0.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+
+      var rn=3;//the number of rectangle
+      var st="rect", str="";
+      let rex=[], rey=[];
+      var mm=1000;
+      var wgt=40, hgt=100;
+
+      for(let i=1;i<=rn;i++){
+        str=st+i.toString();
+            
+        obj=document.getElementById(str);
+        val=getAbsoluteOffsetFromBody(obj);
+
+        rex[i]=val["left"]-202;
+        rey[i]=val["top"]-102;        
+                  
+      }
+
+      var draw=0;
+
+      mm=1000;
+      for(let i=1;i<=rn;i++){
+        if(mm>rex[i])mm=rex[i];
+        if(mm>rey[i])mm=rey[i];
+        if(mm>1000-wgt-rex[i])mm=1000-wgt-rex[i];
+        if(mm>1000-hgt-rey[i])mm=1000-hgt-rey[i];
+
+      }
+
+      var ww=1000-2*mm;
+
+
+      $("#add").click(function() {
+
+        if(draw==2){
+          alert("Can't expand");
+          return;
+        }
+
+          
+
+          if(draw==0){
+            div1 = document.createElement('div1');
+      
+            
+            $(div1).css({
+                position: "absolute",
+                top:  mm,
+                left: mm,
+                width: ww,
+                height: ww
+            });
+
+            $(div1).addClass("contain").html("");
+            
+            $("#container").append(div1);
+            draw=1;
+          }
+
+          var flag=0, xi, yi;
+
+          for(let i=0;i<ww-wgt;i++){
+            for(let j=0;j<ww-hgt;j++){
+
+              var rr=overlay(i+mm, j+mm);
+              if(rr<0){
+                
+                flag=1;
+                xi=i+mm;
+                yi=j+mm;
+                break;
+              }
+            }
+            if(flag==1)break;
+          }
+          if(flag==1){
+            div = document.createElement('div');
+
+            
+            $(div).css({
+                position: "absolute",
+                top:  yi,
+                left: xi
+            });
+
+            $(div).addClass("inner").html("");
+            $("#container").append(div);
+
+            rn++;
+            rex[rn]=xi;
+            rey[rn]=yi;
+
+          }
+          else{            
+            $(div1).remove();
+            mm=mm-10;
+            ww=ww+20;
+            if(mm<0){
+              alert("Reach bound!");
+              draw=2;
+              return;
+            }
+            div1 = document.createElement('div1');
+      
+            
+            $(div1).css({
+                position: "absolute",
+                top:  mm,
+                left: mm,
+                width: ww,
+                height: ww
+            });
+
+            $(div1).addClass("contain").html("");
+            
+            $("#container").append(div1);
+          }
+          
+        });
+
+      var overlay = function (xx, yy)
+      {
+        
+        var ox, oy;
+        for(let i=1 ;i<=rn;i++){
+          ox=xx-rex[i];
+          ox=40-Math.abs(ox);
+
+          oy=yy-rey[i];
+          oy=100-Math.abs(oy);
+
+          if(ox>=0 && oy>=0)return 1;
+        }
+        return -1;
+      }
+      
+    });
+
+    
+
+    var getAbsoluteOffsetFromBody = function( el )      //get x, y coordinate from div
+    {   // finds the offset of el from the body or html element
+        var _x = 0;
+        var _y = 0;
+        while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) )
+        {
+            _x += el.offsetLeft - el.scrollLeft + el.clientLeft;
+            _y += el.offsetTop - el.scrollTop + el.clientTop;
+            el = el.offsetParent;
+        }
+        return { top: _y, left: _x };
+    }
+
+    
+
+</script>
+<style>
+ #container {position: absolute; border: 1px solid red; padding: 10px; width: 1000px; height: 1000px; top: 100px; left: 200px}
+ .inner {position: absolute; border: 1px solid black; width: 40px; height: 100px; background-color: #0f0}
+ .contain {position: absolute; border: 1px; border-style: dashed; width: 200px; height: 200px; background-color: yellow; opacity: 0.5}
+</style>
+<body>
+  <button id="add" style="position: absolute; top: 150px; left: 50px; width: 80px; background-color: #1e64ab; color: white; font-size: 25px">Add new box button</button>
+  
+ <div id="container">
+  <div class="inner" id="rect1" style="top: 450px; left: 400px; background: #0f0; width: 40px; height: 100px; position: absolute;"></div>
+  <div class="inner" id="rect2" style="top: 500px; left: 550px; background: #0f0; width: 40px; height: 100px; position: absolute;"></div>
+  <div class="inner" id="rect3" style="top: 530px; left: 500px; background: #0f0; width: 40px; height: 100px; position: absolute;"></div>
+ </div>
+ 
+</body>
